@@ -1,46 +1,26 @@
-import speech_recognition as aa
 import pyttsx3
+import speech_recognition as sr
 
-listener = aa.Recognizer()
+class AI():
+    __name = ""
+    __skill = []
 
-engine = pyttsx3.init()
-voices = engine.getProperty('voices')
-engine.setProperty('rate', 150)
-engine.setProperty('voice', "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\MSTTS_V110_enCA_LindaM")
-engine.say('The quick brown fox jumped over the lazy dog.')
-engine.runAndWait()
+    def __init__(self, name=None):
+        self.engine = pyttsx3.init()
+        self.r = sr.Recognizer()
+        self.m = sr.Microphone()
 
-def talk(text):
-    engine.say(text)
-    engine.runAndWait()
+        if name is not None:
+            self.__name = name
 
-def input_instruction():
-    global instruction
-    try:
-        with aa.Microphone() as origin:
-            print("listening")
-            speech = listener.listen(origin)
-            instruction = listener.recognize_google(speech)
-            instruction = instruction.lower()
-            if"athena" in instruction:
-                instruction = instruction.replace('athena', '')
-            else:
-                instruction = ""
-                   
-            
+        print("listening")
+        with self.m as source:
+            self.r.adjust_for_ambient_noise(source)
 
-    except:
-        pass
-    return instruction
+    @property
+    def name(self):
+        return self.__name
 
-def play_Athena():
-
-    instruction = input_instruction()
-    print(instruction)
-    if'how are you' in instruction:
-        talk("I'm good!")
-        print("ok")
-  
-while 1:
-    play_Athena()
-    instruction = ""
+    @name.setter
+    def name(self, value):
+        self.__name = value
