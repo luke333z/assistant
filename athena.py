@@ -1,7 +1,7 @@
 from ai import AI
 import pyjokes
 from todo import Todo,Item
-
+import json
 athena = AI()
 todo = Todo ()
 
@@ -13,16 +13,16 @@ def joke():
 def add_todo()->bool:
     item = Item()
     athena.say("What do you want to add to the list?")
-    try:
-        item.title = athena.listen()
+    
+    data = athena.listen()
+    if data is not None:
+        phrase = data[0].get('transcript')
+        item.title = phrase
         todo.new_item(item)
         message = "Added " + item.title
         athena.say(message)
         return True
-    except:
-        print("An error has occured")
-        return False
-
+    
 def list_todos():
     if len(todo) > 0:
         athena.say("Here is your list")
@@ -34,11 +34,14 @@ def list_todos():
 
 def remove_todo()->bool:
     athena.say("Which item do you want to remove?")
-    item_title = athena.listen()
-    if item_title:
-        item_title.lower()
-    athena.say(todo.remove_item(title=item_title))
-    return True
+    data = athena.listen()
+    if data is not None:
+        phrase = data[0].get('transcript')
+        item_title = phrase
+        if item_title:
+            item_title.lower()
+        athena.say(todo.remove_item(title=item_title))
+        return True
 
 
 def item_age():
@@ -51,37 +54,56 @@ def item_age():
 
 
 remove_todo()
-list_todos()
-remove_todo()
 
 
 
 #testing area
-command = "terminate"
-while True and command != "terminate":
-    try:
-        athena.listen(command)
-        command = command.lower()
-    except:
-        print("error")
-        command = ""
-    print(command)
-    if command == "tell me a joke":
-        joke()
-        command = ""
-    if command == "test volume" or command == "best volume":
-        athena.say("Testing volume..")
-        athena.say("The quick brown fox jumps over the lazy dog.")
-
-    if command == "add item":
-        add_todo()
-        command = ""
-        
-    if command == "list items":
-        list_todos()
-        command = ""
-    if command == "remove item":
-        remove_todo()
-        command = ""
+state = True
+command = "testing"
+def findCommand():
+    data = athena.listen()
+    if data is not None:
+        for dictionary in data:
+            command = dictionary.get('transcript')
+            command = command.lower()
+            print(command)
+            if command == "tell me a joke":
+                joke()
+                command = ""
+                break
+            if command == "test volume":
+                athena.say("Testing volume..")
+                athena.say("The quick brown fox jumps over the lazy dog.")
+                break
+            if command == "add item":
+                add_todo()
+                command = ""  
+                break
+            if command == "list items":
+                list_todos()
+                command = ""
+                break
+            if command == "remove item":
+                remove_todo()
+                command = ""
+                break
+            if command == "terminate":
+                state=False
+                
+while state and command != 'testing':
+    data = athena.listen()
+    if data is not None:
+        for dictionary in data:
+            wakeword = dictionary.get('transcript')
+            print(wakeword)
+            if wakeword is None:
+                print("watafaq")
+            if wakeword is not None:
+                wakeword = wakeword.lower()
+                print(wakeword)
+                if "athena" in wakeword:
+                    print("activated. Listening for command")
+                    findCommand()
+                    break
 
 athena.say("Shutting Down...")

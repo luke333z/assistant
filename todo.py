@@ -38,7 +38,7 @@ class Item():
 
     @property
     def priority(self):
-        return self.__priority
+        return self.__priority.name
     
     @priority.setter
     def priority(self, value:Priority):
@@ -61,7 +61,7 @@ class Item():
     
     @property
     def status(self):
-        return self.__status
+        return self.__status.name
     @status.setter
     def status(self, value:Status):
         self.__status = value
@@ -92,7 +92,7 @@ class Item():
 
     @notes.setter
     def notes(self, value:str):
-        self.__value = value
+        self.__notes = value
         
 
 class Todo():

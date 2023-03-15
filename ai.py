@@ -33,20 +33,25 @@ class AI():
     def say(self, sentence):
         self.engine.say(sentence)
         self.engine.runAndWait()
-
-    def listen(self, phrase):
+   
+    def listen(self):
         print("say something")
         with self.m as source:
-            audio = self.r.listen(source,timeout=5)
+            self.r.adjust_for_ambient_noise(source)
+            try:
+                audio = self.r.listen(source,timeout=5)
+            except:
+                return
             print('got it')
         try:
             print("okok")
-            phrase = self.r.recognize_google(audio, show_all=False, language="en_GB")
-            sentence = "got it you said"+phrase
-            self.engine.say(sentence)
-            self.engine.runAndWait()
-            return phrase
+            data = self.r.recognize_google(audio, show_all=True, language="en_US")
+            if data is not None:
+                data = data.get('alternative')
+            print("listen successful")
+            return data
         except:
             pass
-            return False
+    
+    
             
