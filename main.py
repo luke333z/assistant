@@ -30,3 +30,4 @@ class FaceRecognition:
         for image in os.listdir('faces'):
             face_image= face_recognition_models.load_image_file(f'faces/{image}')
             face_encoding = face_recognition_models.face_recognition_model_location
+            

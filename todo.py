@@ -38,7 +38,7 @@ class Item():
 
     @property
     def priority(self):
-        return self.__priority.name
+        return self.__priority
     
     @priority.setter
     def priority(self, value:Priority):
@@ -61,7 +61,7 @@ class Item():
     
     @property
     def status(self):
-        return self.__status.name
+        return self.__status
     @status.setter
     def status(self, value:Status):
         self.__status = value
@@ -172,7 +172,7 @@ class Todo():
                             fp.write(line)
                 message = 'removed'+ item.title
                 return message             
-            message = "Item wirh title"+ title+ "not found"
+            message = "Item wirh title "+ title+ " not found"
             return message
     
     def age_item(self, title:str=None):

@@ -56,16 +56,9 @@ def tucafe():
     file.close
 
 
-#testing area
 
-
-
-
-
-
-#testing area
 state = True
-command = ""
+command = "teting"
 def findCommand():
     data = athena.listen()
     if data is not None:
