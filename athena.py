@@ -49,17 +49,23 @@ def item_age():
     item_title = athena.listen()
     #not finished
 
+def tucafe():
+    file = open('tucafe.txt', 'r')
+    for line in file:
+        athena.say(line)
+    file.close
+
+
 #testing area
 
 
 
-remove_todo()
 
 
 
 #testing area
 state = True
-command = "testing"
+command = ""
 def findCommand():
     data = athena.listen()
     if data is not None:
@@ -71,8 +77,8 @@ def findCommand():
                 joke()
                 command = ""
                 break
-            if command == "test volume":
-                athena.say("Testing volume..")
+            if command == "test voice":
+                athena.say("Testing voice..")
                 athena.say("The quick brown fox jumps over the lazy dog.")
                 break
             if command == "add item":
@@ -89,6 +95,11 @@ def findCommand():
                 break
             if command == "terminate":
                 state=False
+            if command == 'coffee':
+                tucafe()
+                command = ""
+                break
+                
                 
 while state and command != 'testing':
     data = athena.listen()
@@ -101,7 +112,7 @@ while state and command != 'testing':
             if wakeword is not None:
                 wakeword = wakeword.lower()
                 print(wakeword)
-                if "athena" in wakeword:
+                if "activate" in wakeword:
                     print("activated. Listening for command")
                     findCommand()
                     break
