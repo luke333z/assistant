@@ -102,19 +102,20 @@ def findCommand():
                 
                 
 while state and command != 'testing':
-    data = athena.listen()
-    if data is not None:
-        for dictionary in data:
-            wakeword = dictionary.get('transcript')
-            print(wakeword)
-            if wakeword is None:
-                print("watafaq")
-            if wakeword is not None:
-                wakeword = wakeword.lower()
-                print(wakeword)
-                if "activate" in wakeword:
-                    print("activated. Listening for command")
-                    findCommand()
-                    break
+    findCommand()
+#    data = athena.listen()
+#   if data is not None:
+#        for dictionary in data:
+#            wakeword = dictionary.get('transcript')
+#            print(wakeword)
+#            if wakeword is None:
+#                print("watafaq")
+#           if wakeword is not None:
+#                wakeword = wakeword.lower()
+#               print(wakeword)
+#                if "activate" in wakeword:
+#                    print("activated. Listening for command")
+#                    findCommand()
+#                    break
 
 athena.say("Shutting Down...")
