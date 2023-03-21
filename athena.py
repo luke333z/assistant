@@ -44,7 +44,7 @@ def remove_todo()->bool:
 
 def age_todo():
     athena.say("Which item do you want to see the age of?")
-    data = "rubik's cube"#athena.listen()
+    data = athena.listen()
     if data is not None:
         print(data)
         athena.say(todo.item_age(title=data))
