@@ -1,4 +1,3 @@
-from datetime import date
 from datetime import datetime
 from datetime import timedelta
 from enum import Enum
@@ -38,7 +37,7 @@ class Item():
 
     @property
     def priority(self):
-        return self.__priority
+        return self.__priority.name
     
     @priority.setter
     def priority(self, value:Priority):
@@ -54,14 +53,14 @@ class Item():
 
     @property
     def age(self):
-        t1=timedelta(self.__creation_date)
-        t2=timedelta(datetime.today())
+        t1=self.__creation_date
+        t2=datetime.today()
         t=t2-t1
-        return t.total_seconds/3600
+        return str(t)
     
     @property
     def status(self):
-        return self.__status
+        return self.__status.name
     @status.setter
     def status(self, value:Status):
         self.__status = value
@@ -94,33 +93,31 @@ class Item():
     def notes(self, value:str):
         self.__notes = value
         
-
 class Todo():
     __todos = []
 
     def __init__(self):
-        print("new todolist created")
+        print("Initialized Todo list")
         self._current = -1
-        file = open("todo.txt", "r")
-        count = 0
-        for line in file:
-            try:
-                count+=1
-                module = line.strip().split("<<>>")
-                item1 = Item()
-                item1.title=module[0]
-                item1.creation_date=datetime.strptime(module[1],'%Y-%m-%d %H:%M:%S.%f')
-                item1.status=module[2]
-                item1.priority=module[3]
-                item1.url=module[4]
-                item1.notes=module[5]
-                item1.icon= module[6]
-                self.__todos.append(item1)
-            except:
-                pass
-        file.close()
-        
 
+        with open("todo.txt", "r") as file:
+            for line in file:
+                try:
+                    module = line.strip().split("<<>>")
+                    
+                    item1 = Item()
+                    item1.title = module[0]
+                    item1.creation_date = datetime.strptime(module[1],'%Y-%m-%d %H:%M:%S.%f')
+                    item1.status = module[2]
+                    item1.priority = module[3]
+                    item1.url = module[4]
+                    item1.notes = module[5]
+                    item1.icon = module[6]
+
+                    self.__todos.append(item1)
+                except:
+                    pass
+        
     def __iter__(self):
         return self
     
@@ -138,50 +135,54 @@ class Todo():
 
     def new_item(self, item:Item):
         self.__todos.append(item)
-        file = open("todo.txt", "a")
-        file.write(item.title+"<<>>"+str(item.creation_date)+"<<>>"+item.status+"<<>>"+item.priority+"<<>>"+item.url+"<<>>"+item.notes+"<<>>"+item.icon+'\n')
-        file.close()
 
+        with open("todo.txt", "a") as file:
+            file.write(item.title+"<<>>"+str(item.creation_date)+"<<>>"+item.status+"<<>>"+item.priority+"<<>>"+item.url+"<<>>"+item.notes+"<<>>"+item.icon+'\n')
 
     @property
     def items(self)->list:
         return self.__todos
     
-    def show(self):
-        print("*"*80)
+    def findItem(self, title: str=None) -> Item:
         for item in self.__todos:
-            print(item.title, item.status, item.priority)
-    
-    def remove_item(self, uuid:str=None, title: str=None)->bool:
-        ok = False
-        if title is None and uuid is None:
-            return "You need to provide some details blah blah"
-        if uuid is None and title:
-            for item in self.__todos:
-                if item.title == title:
-                    self.__todos.remove(item)
-                    ok=True
-                    break
-            if ok is True:   
-                with open("todo.txt", "r") as fp:
-                    lines = fp.readlines()
-                with open("todo.txt", "w") as fp:
-                    for line in lines:   
-                        print(line)
-                        if line.strip("\n") != str(item.title+"<<>>"+str(item.creation_date)+"<<>>"+item.status+"<<>>"+item.priority+"<<>>"+item.url+"<<>>"+item.notes+"<<>>"+item.icon):
-                            fp.write(line)
-                message = 'removed'+ item.title
-                return message             
-            message = "Item wirh title "+ title+ " not found"
-            return message
-    
-    def age_item(self, title:str=None):
-        
-        return True
+            if item.title == title:
+                return item
+        return None
             
+    def remove_item(self, title: str=None) -> bool:
+        item = self.findItem(title)
+        if item is not None:
+            self.__todos.remove(item)
+             
+            with open("todo.txt", "r") as fp:
+                lines = fp.readlines()
+
+            with open("todo.txt", "w") as fp:
+                for line in lines:   
+                    print(line)
+                    if line.strip("\n") != str(item.title+"<<>>"+str(item.creation_date)+"<<>>"+item.status+"<<>>"+item.priority+"<<>>"+item.url+"<<>>"+item.notes+"<<>>"+item.icon):
+                        fp.write(line)
+
+         
+            return 'removed'+ item.title    
+                 
+
+        return "Item wirh title "+ title+ " not found"
     
+    def item_age(self, title:str=None):
+        ok=False
+        for item in self.__todos:
+            if item.title == title:
+                age = item.age
+                data = age.strip().split(',')
+                time = data[1].strip().split(":")
+                hours = int(time[0])+ round(int(time[1])/60)
+                age = data[0]+ " and "+str(hours)+" hour"
+                if hours > 1:
+                    age += "s"
+                print(age)
+                return "Item with title " + title + " was created " + age + " ago."
+        return "Item wirh title "+ title+ " not found"
 
 
-    
-
-       
+#function to set and read priority and status not completed

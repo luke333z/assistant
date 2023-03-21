@@ -16,14 +16,13 @@ def add_todo()->bool:
     
     data = athena.listen()
     if data is not None:
-        phrase = data[0].get('transcript')
-        item.title = phrase
+        item.title = data
         todo.new_item(item)
         message = "Added " + item.title
         athena.say(message)
         return True
     
-def list_todos():
+def list_todo():
     if len(todo) > 0:
         athena.say("Here is your list")
         for item in todo:
@@ -34,20 +33,21 @@ def list_todos():
 
 def remove_todo()->bool:
     athena.say("Which item do you want to remove?")
-    data = athena.listen()
+    data = athena.listen()  
     if data is not None:
-        phrase = data[0].get('transcript')
-        item_title = phrase
-        if item_title:
+        item_title = data
+        if item_title is not None: 
             item_title.lower()
         athena.say(todo.remove_item(title=item_title))
         return True
 
 
-def item_age():
+def age_todo():
     athena.say("Which item do you want to see the age of?")
-    item_title = athena.listen()
-    #not finished
+    data = "rubik's cube"#athena.listen()
+    if data is not None:
+        print(data)
+        athena.say(todo.item_age(title=data))
 
 def tucafe():
     file = open('tucafe.txt', 'r')
@@ -57,10 +57,10 @@ def tucafe():
 
 
 
-state = True
-command = "teting"
+state = False
+command = ""
 def findCommand():
-    data = athena.listen()
+    data = athena.elasticListen()
     if data is not None:
         for dictionary in data:
             command = dictionary.get('transcript')
@@ -79,7 +79,7 @@ def findCommand():
                 command = ""  
                 break
             if command == "list items":
-                list_todos()
+                list_todo()
                 command = ""
                 break
             if command == "remove item":
@@ -94,7 +94,7 @@ def findCommand():
                 break
                 
                 
-while state and command != 'testing':
+while state and command != '':
     findCommand()
 #    data = athena.listen()
 #   if data is not None:

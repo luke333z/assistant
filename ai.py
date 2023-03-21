@@ -7,7 +7,7 @@ class AI():
 
     def __init__(self, name=None):
         self.engine = pyttsx3.init()
-        voices = self.engine.getProperty('voices')
+
         self.engine.setProperty('voice', 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\MSTTS_V110_enCA_LindaM')
         self.r = sr.Recognizer()
         self.m = sr.Microphone()
@@ -25,33 +25,50 @@ class AI():
 
     @name.setter
     def name(self, value):
-        sentence = "Hello, my name is" + self.__name
         self.__name = value
-        self.engine.say(sentence)
-        self.engine.runAndWait()
 
     def say(self, sentence):
         self.engine.say(sentence)
         self.engine.runAndWait()
    
-    def listen(self):
-        print("say something")
+    def elasticListen(self):
+        print("listening")
         with self.m as source:
             self.r.adjust_for_ambient_noise(source)
             try:
                 audio = self.r.listen(source,timeout=5)
             except:
                 return
-            print('got it')
+            print('Audio received')
+
         try:
-            print("okok")
-            data = self.r.recognize_google(audio, show_all=True, language="en_US")
-            if data is not None:
-                data = data.get('alternative')
-            print("listen successful")
-            return data
+            dataDict = self.r.recognize_google(audio, show_all=True, language="en_US")
+            if dataDict is not None:
+                dataList = dataDict.get('alternative')
+                print("listen successful")
+                return dataList #list of all alternatives
+        except: 
+            pass
+
+    def listen(self):
+        print("listening")
+        with self.m as source:
+            self.r.adjust_for_ambient_noise(source)
+            try:
+                audio = self.r.listen(source, timeout=5)
+            except:
+                return
+            print('Audio received')
+
+        try:
+            phrase = self.r.recognize_google(audio, show_all=False, language="en_US")
+            if phrase is not None:
+                print("listen successful")
+                phrase = phrase.lower()
+                return phrase
         except:
             pass
+            
     
     
             
